@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddMemoryCache();
 
 // AutoMapper configuration
 var config = new MapperConfiguration(cfg =>
@@ -21,10 +20,9 @@ var config = new MapperConfiguration(cfg =>
 IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-// Database & Custom services
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddCustomServices();
-builder.Services.AddJwtAuthentication();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
