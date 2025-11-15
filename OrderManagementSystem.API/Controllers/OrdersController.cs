@@ -18,25 +18,23 @@ public class OrdersController : ControllerBase
     [HttpPost("Create")]
     public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ApiResponse<string>.BadRequest("Geçersiz istek."));
+
         try
         {
-            if (!ModelState.IsValid)
+            var result = await _orderService.CreateAsync(dto);
+
+            if (!string.IsNullOrEmpty(result.Error))
             {
-                return BadRequest(ApiResponse<string>.BadRequest("Geçersiz istek."));
+                return BadRequest(ApiResponse<string>.BadRequest(result.Error));
             }
 
-            var order = await _orderService.CreateOrderAsync(dto);
-
-            if (order == null)
-            {
-                return BadRequest(ApiResponse<string>.BadRequest("Ürün bulunamadı veya stok yetersiz."));
-            }
-
-            return Ok(ApiResponse<OrderDto>.Ok(order, "Sipariş başarıyla oluşturuldu."));
+            return Ok(ApiResponse<OrderDto>.Ok(result.OrderDto, "Sipariş başarıyla oluşturuldu."));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponse<string>.InternalError("Sipariş oluşturulamadı." + ex.Message));
+            return StatusCode(500, ApiResponse<string>.InternalError("Beklenmeyen hata: " + ex.Message));
         }
     }
 
@@ -85,7 +83,7 @@ public class OrdersController : ControllerBase
     {
         try
         {
-            var deletedOrder = await _orderService.DeleteOrderAsync(orderId);
+            var deletedOrder = await _orderService.DeleteAsync(orderId);
 
             if (!deletedOrder)
             {

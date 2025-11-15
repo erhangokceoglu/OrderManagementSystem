@@ -1,5 +1,4 @@
-﻿using OrderManagementSystem.BLL.DTOs.HelperDtos;
-using OrderManagementSystem.BLL.DTOs.OrderInfos;
+﻿using OrderManagementSystem.BLL.DTOs.OrderInfos;
 namespace OrderManagementSystem.BLL.DTOs.OrderDtos;
 
 public class OrderCreateDto

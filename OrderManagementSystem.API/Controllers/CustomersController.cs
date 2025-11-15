@@ -15,12 +15,12 @@ public class CustomersController : ControllerBase
         _customerService = customerService;
     }
 
-    [HttpGet("GetAllCustomers")]
-    public async Task<IActionResult> GetAllCustomers()
+    [HttpGet("GetAll")]
+    public async Task<IActionResult> GetAll()
     {
         try
         {
-            var customers = await _customerService.GetAllCustomersAsync();
+            var customers = await _customerService.GetAllAsync();
 
             if (customers == null || customers.Count == 0)
             {

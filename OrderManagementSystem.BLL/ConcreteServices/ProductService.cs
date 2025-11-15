@@ -17,7 +17,7 @@ public class ProductService : IProductService
         _mapper = mapper;
     }
 
-    public async Task<List<ProductDto>> GetAllProductsAsync()
+    public async Task<List<ProductDto>> GetAllAsync()
     {
         try
         {

@@ -3,5 +3,5 @@ namespace OrderManagementSystem.BLL.AbstractServices;
 
 public interface ICustomerService
 {
-    Task<List<CustomerDto>> GetAllCustomersAsync();
+    Task<List<CustomerDto>> GetAllAsync();
 }

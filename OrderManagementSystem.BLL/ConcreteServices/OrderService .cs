@@ -17,7 +17,7 @@ public class OrderService : IOrderService
         _mapper = mapper;
     }
 
-    public async Task<OrderDto> CreateOrderAsync(OrderCreateDto orderCreateDto)
+    public async Task<OrderResponseDto> CreateAsync(OrderCreateDto orderCreateDto)
     {
         var orderRepository = _unitOfWork.GetRepository<Order>();
         var productRepository = _unitOfWork.GetRepository<Product>();
@@ -37,12 +37,14 @@ public class OrderService : IOrderService
 
                 if (product == null)
                 {
-                    throw new Exception($"Ürün bulunamadı: {orderInfo.ProductId}");
+                    await _unitOfWork.RollbackTransactionAsync();
+                    return new OrderResponseDto { Error = $"Ürün bulunamadı: {orderInfo.ProductId}" };
                 }
 
                 if (product.Stock < orderInfo.Quantity)
                 {
-                    throw new Exception($"{product.Name} için stok yetersiz.");
+                    await _unitOfWork.RollbackTransactionAsync();
+                    return new OrderResponseDto { Error = $"{product.Name} için stok yetersiz." };
                 }
 
                 product.Stock -= orderInfo.Quantity;
@@ -59,7 +61,11 @@ public class OrderService : IOrderService
             await orderRepository.AddAsync(order);
             await _unitOfWork.CompleteAsync();
             await _unitOfWork.CommitTransactionAsync();
-            return _mapper.Map<OrderDto>(order);
+
+            return new OrderResponseDto
+            {
+                OrderDto = _mapper.Map<OrderDto>(order)
+            };
         }
         catch
         {
@@ -116,7 +122,7 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<bool> DeleteOrderAsync(Guid orderId)
+    public async Task<bool> DeleteAsync(Guid orderId)
     {
         var orderRepository = _unitOfWork.GetRepository<Order>();
 

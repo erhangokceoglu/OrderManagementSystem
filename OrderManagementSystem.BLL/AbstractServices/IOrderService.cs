@@ -3,8 +3,8 @@ namespace OrderManagementSystem.BLL.AbstractServices;
 
 public interface IOrderService
 {
-    Task<OrderDto> CreateOrderAsync(OrderCreateDto dto);
+    Task<OrderResponseDto> CreateAsync(OrderCreateDto orderCreateDto);
     Task<List<OrderDto>> GetByCustomerIdAsync(Guid customerId);
     Task<OrderDto?> GetByOrderIdAsync(Guid orderId);
-    Task<bool> DeleteOrderAsync(Guid orderId);
+    Task<bool> DeleteAsync(Guid orderId);
 }

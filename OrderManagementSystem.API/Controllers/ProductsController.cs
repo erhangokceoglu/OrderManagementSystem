@@ -15,12 +15,12 @@ public class ProductsController : ControllerBase
         _productService = productService;
     }
 
-    [HttpGet("GetAllProducts")]
-    public async Task<IActionResult> GetAllProducts()
+    [HttpGet("GetAll")]
+    public async Task<IActionResult> GetAll()
     {
         try
         {
-            var products = await _productService.GetAllProductsAsync();
+            var products = await _productService.GetAllAsync();
 
             if (products == null || products.Count == 0)
             {

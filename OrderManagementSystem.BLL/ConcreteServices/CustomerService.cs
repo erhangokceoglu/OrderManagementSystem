@@ -17,7 +17,7 @@ public class CustomerService : ICustomerService
         _mapper = mapper;
     }
 
-    public async Task<List<CustomerDto>> GetAllCustomersAsync()
+    public async Task<List<CustomerDto>> GetAllAsync()
     {
         try
         {
