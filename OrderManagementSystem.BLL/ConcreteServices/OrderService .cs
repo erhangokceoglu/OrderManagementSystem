@@ -85,7 +85,7 @@ public class OrderService : IOrderService
             var orders = await orderRepository
                 .GetAllAsync()
                 .Where(x => x.CustomerId == customerId)
-                .Include(x => x.OrderInfos)
+                .Include(x => x.OrderInfos).ThenInclude(x=>x.Product)
                 .ToListAsync();
 
             await _unitOfWork.CommitTransactionAsync();
@@ -108,12 +108,35 @@ public class OrderService : IOrderService
         {
             var order = await orderRepository
                 .GetAllAsync()
-                .Include(o => o.OrderInfos)
+                .Include(x => x.OrderInfos).ThenInclude(x => x.Product)
                 .SingleOrDefaultAsync(o => o.Id == orderId);
 
             await _unitOfWork.CommitTransactionAsync();
 
             return _mapper.Map<OrderDto>(order);
+        }
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
+    }
+
+    public async Task<List<OrderDto>> GetAllAsync()
+    {
+        var orderRepository = _unitOfWork.GetRepository<Order>();
+
+        await using var transaction = await _unitOfWork.BeginTransactionAsync();
+
+        try
+        {
+            var orders = await orderRepository
+                .GetAllAsync()
+                .Include(o => o.OrderInfos).ThenInclude(x => x.Product)
+                .ToListAsync();
+
+            await _unitOfWork.CommitTransactionAsync();
+            return _mapper.Map<List<OrderDto>>(orders);
         }
         catch
         {

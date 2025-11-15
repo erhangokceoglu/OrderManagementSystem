@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OrderManagementSystem.API.Models;
 using OrderManagementSystem.BLL.AbstractServices;
 using OrderManagementSystem.BLL.DTOs.OrderDtos;
@@ -75,6 +76,28 @@ public class OrdersController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ApiResponse<string>.InternalError("Sipariş getirilemedi." + ex.Message));
+        }
+    }
+
+    [Authorize]
+    [HttpGet("GetAll")]
+    public async Task<IActionResult> GetAll()
+    {
+        try
+        {
+            var orders = await _orderService.GetAllAsync();
+
+            if (orders == null)
+            {
+                orders = new List<OrderDto>();
+            }
+
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500,
+                ApiResponse<string>.InternalError("Siparişler getirilemedi: " + ex.Message));
         }
     }
 

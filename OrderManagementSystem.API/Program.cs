@@ -1,4 +1,5 @@
 using AutoMapper;
+using OrderManagementSystem.API.Extensions;
 using OrderManagementSystem.API.ServiceCollectionExtensions;
 using OrderManagementSystem.BLL.MappingProfiles;
 using OrderManagementSystem.DAL.Data;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 
 // AutoMapper configuration
 var config = new MapperConfiguration(cfg =>
@@ -22,6 +24,7 @@ builder.Services.AddSingleton(mapper);
 // Database & Custom services
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddCustomServices();
+builder.Services.AddJwtAuthentication();
 
 var app = builder.Build();
 
@@ -31,7 +34,6 @@ using (var scope = app.Services.CreateScope())
     SeedData.Initialize(db);
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -39,7 +41,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
