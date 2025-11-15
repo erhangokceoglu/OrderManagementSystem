@@ -1,12 +1,15 @@
-﻿using OrderManagementSystem.BLL.AbstractServices;
-using OrderManagementSystem.BLL.DTOs.TokenDtos;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using OrderManagementSystem.BLL.AbstractServices;
+using OrderManagementSystem.BLL.DTOs.TokenDtos;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-namespace OrderManagementSystem.BLL.ConcreteServices;
+
+//Her access token expire süresi dolduğunda worker yeni token almak yerine refresh token ile yenileme yaparım.
+//Bu sayede Access Token istek sayın artmıyor API saatte 5 limit koyduğu token isteğini aşmıyorsun.
+//Redis ilede refresh tokenlar saklanabilirdi ben uygulamadım.
 
 public class AuthService : IAuthService
 {
@@ -125,3 +128,4 @@ public class AuthService : IAuthService
         return Convert.ToBase64String(randomBytes);
     }
 }
+
